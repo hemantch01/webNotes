@@ -11,8 +11,13 @@
   "license": "ISC",
   "dependencies": {
     "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.96",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7"
   }
 }
