@@ -1,8 +1,9 @@
 import z from 'zod';
 import { Router } from "express";
-import { users } from '../db/usersDB';
+import { contentsch, users } from '../db/usersDB';
 import jwt from 'jsonwebtoken';
 import {jwtPassword} from '../config/config'
+import signInMiddleWare from '../middlewares/middleware';
 const router = Router();
 
 const signupSchema = z.object({
@@ -32,10 +33,10 @@ router.post('/signup',async (req,res)=>{
     }
    
 });
-const signInSchema = z.object({
+    const signInSchema = z.object({
     email:z.string(),
     password:z.string()
-})
+    })
 router.post('/signin',async (req,res)=>{
     const {success} = signInSchema.safeParse(req.body);
     if(!success){
@@ -48,11 +49,30 @@ router.post('/signin',async (req,res)=>{
     });
     const emailToSign = req.body.email;
     if(!isUserExist){res.status(403).json('email already exist')};
-    const signInToken= jwt.sign({payload: {emailToSign}},jwtPassword);
+    const signInToken= jwt.sign({emailToSign},jwtPassword);
     res.status(200).json({msg:'user Signin successfully',token: signInToken})
-}catch(err){
+      }catch(err){
     res.status(500).json({msg:'something went wrong'})
-}
+                 }
+})
+
+router.post('/content',signInMiddleWare,async (req,res)=>{
+    const type = req.body.type;
+    const link = req.body.link;
+    const title = req.body.title;
+    const isContentSaved = await contentsch.create({
+        type,
+        link,
+        title,
+        userId: req.userId,
+        tags:[]
+
+    })
+    if(isContentSaved) {
+        res.status(200).json({
+            message:'content added'
+        })
+    }
 })
 
 export default router;

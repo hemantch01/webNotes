@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 mongoose.connect('connection string');
 
 const userSchema = new mongoose.Schema({
@@ -18,4 +18,20 @@ const userSchema = new mongoose.Schema({
 });
 
 export const users = mongoose.model('users', userSchema);
+
+const contentTypes = ['image','video','article','audio'];
+
+const contentSchema = new mongoose.Schema({
+     link:   {type:String,
+              require: true},
+    type:    {type:String,enum:contentTypes,require: true},
+    title:   {type:String,
+              require:true},
+    tags:    [{type:Types.ObjectId,
+            ref:'Tag'}],
+    userId:{type:Types.ObjectId,
+            ref:'User',
+            required:true}
+})
+export const contentsch =  mongoose.model('contents',contentSchema);
 
