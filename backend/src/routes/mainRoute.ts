@@ -7,20 +7,23 @@ import signInMiddleWare from '../middlewares/middleware';
 const router = Router();
 
 const signupSchema = z.object({
-    email: z.string().email().min(6),
-    password: z.string().min(8)
+    email: z.string().min(8),
+    password: z.string()
 })
 
 router.post('/signup',async (req,res)=>{
     const {success} = signupSchema.safeParse(req.body);
+    console.log(success);
     if(!success){
         res.status(411).json({msg:"error in inputs(email must be valid and password min of 8 letters)"})
+        return;
     }
     try{ 
         
         const isUserExist = await users.findOne({email: req.body.email,password: req.body.password})
     if(isUserExist){
         res.status(403).json({msg:"user already exist"})
+        return;
     }
     else{
         const isUserCreated = await users.create(req.body);
@@ -74,5 +77,26 @@ router.post('/content',signInMiddleWare,async (req,res)=>{
         })
     }
 })
+
+router.get('/content',signInMiddleWare,async (req,res)=>{
+const userId = req.userId;
+const content = await contentsch.find({
+    userId:userId
+}).populate('userid','username')
+if(content){res.status(200).json({content})};
+})
+
+
+router.delete('/content',signInMiddleWare,async (req,res)=>{
+    const contentId = req.body.contentId;
+    await contentsch.deleteMany({
+        contentId,
+        userId: req.userId
+    })
+    res.json({
+        msg: 'Deleted'
+    })
+})
+
 
 export default router;

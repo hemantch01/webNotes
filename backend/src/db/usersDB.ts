@@ -1,5 +1,5 @@
 import mongoose, { Types } from "mongoose";
-mongoose.connect('connection string');
+mongoose.connect('mongodb://localhost:27017/brainly');
 
 const userSchema = new mongoose.Schema({
     email:{

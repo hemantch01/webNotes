@@ -6,6 +6,7 @@
   "dependencies": {
     "@types/mongoose": "^5.11.96",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "zod": "^3.24.1"
   }
 }
